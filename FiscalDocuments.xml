@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+    
+               <record model="ir.ui.view" id="controp_costi_ricavi_form_view">
+                <field name="name">controp.costi.ricavi.form</field>
+                <field name="model">controp.costi.ricavi</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Contropartite Costi Ricavi">
+                      <field name="name" />
+                      <field name="conto_cassa" />
+                      <notebook colspan="4" >
+                        <page string="Vendite">
+                        	<field name="conto_v_ricacc" />
+                        	<field name="conto_v_sp_incasso" />
+                        	<field name="conto_v_sp_imballo" />
+                       	 	<field name="conto_v_sp_trasporto" />
+                        	<field name="conto_v_omaggi" />
+                        	<field name="conto_v_ivaomaggi" />
+                        	<field name="conto_v_bolli" />
+                        	<field name="codice_iva_v_esente" />
+                        	<field name="codice_iva_v_fcampo" />
+                        </page>
+                        <page string="Acquisti">
+                        	<field name="conto_a_cosacc" />
+                        	<field name="conto_a_sp_pagamento" />
+                        	<field name="conto_a_sp_imballo" />
+                        	<field name="conto_a_sp_trasporto" />
+                        	<field name="conto_a_omaggi" />
+                        	<field name="conto_a_ivaomaggi" />
+                        	<field name="conto_a_bolli" />
+                        	<field name="codice_iva_a_esente" />
+                        	<field name="codice_iva_a_fcampo" />
+                        
+                        </page>
+                        <page string="Causali Contabili">
+                        	<field name="causale_incasso" />
+                        	<field name="causale_pagamento" />
+                        </page>
+                        
+                      </notebook>
+                    </form>
+                </field>
+            </record>
+ 
+         <record id="action_controp_costi_ricavi" model="ir.actions.act_window">
+            <field name="name">Contropartite Costi Ricavi</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">controp.costi.ricavi</field>
+			<field name="view_mode">tree,form</field>
+        </record>
+        
+
+        <menuitem action="action_controp_costi_ricavi" id="menu_action_controp_costi_ricavi_form" parent="account.menu_finance_accounting"/>
+ 
+ 
+ 		 <record model="ir.ui.view" id="primanota2_form_view">
+                <field name="name">account.primanota2.form</field>
+                <field name="model">account.move</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="PrimaNotaIT.view_primanota_form"/>
+                <field name="arch" type="xml">
+
+                        <field name="protocollo" position="after">
+                        	<field name="fiscaldoc_id" readonly="True" />
+						</field>
+                </field>
+            </record>
+ 
+ 
+ 		 <record model="ir.ui.view" id="fiscaldoc_causalidoc2_form_view">
+                <field name="name">fiscaldoc.causalidoc.form2</field>
+                <field name="model">fiscaldoc.causalidoc</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="ItalianFiscalDocument.fiscaldoc_causali_view_form"/>
+                <field name="arch" type="xml">
+
+                        <field name="flag_contabile" position="after">
+                        	<field name="causale_id"/>
+						</field>
+                </field>
+            </record>
+    
+    </data>
+</openerp>
