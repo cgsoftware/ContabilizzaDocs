@@ -11,6 +11,9 @@
                     <group col="4" colspan="4">
                         <field name='to_date_doc'  />
                         <newline></newline>
+                        <field name='flg_pag_cont'  />
+                        <field name='flg_acc_cont'  />
+                        <newline></newline>
                         <field name='fldtreg'  />
                         
                         <field name='date'  />  

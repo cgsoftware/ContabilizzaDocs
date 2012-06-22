@@ -190,6 +190,7 @@ class contab_effetti(osv.osv_memory):
             for effetto_scad in doc.righe_scadenze:
                 if effetto_scad.scadenza_id:
                     # è certamente agganciato un documento di vendita sulla scadenza, non so se esiste la regisatrazione di prima nota
+                    
                     cerca = [('fiscaldoc_id','=',effetto_scad.scadenza_id.name.id)]
                     id_testa_doc = self.pool.get('account.move').search(cr,uid,cerca)
                     if id_testa_doc: # il documento è contabilizzato
@@ -216,7 +217,22 @@ class contab_effetti(osv.osv_memory):
         return [testo_log,flag_scritto]
     
     def allinea_scad(self,cr,uid,ids,context):
-        cerca = [('scadenza_id','=',None)]
+        # questa funzione serve a risolvere il problema iniziale dei collegamenti
+        # tra scadenza e scadenza documento e a cancellare le scadenze appese che non hanno
+        # + la relativa testata.
+        
+        cr.execute(""" delete from   effetti_scadenze   where id in (
+SELECT 
+  effetti_scadenze.id
+FROM 
+  effetti_scadenze  left outer join 
+  effetti on effetti_scadenze.name = effetti.id 
+where data_scadenza isnull
+)
+""")
+        
+        #cerca = [('scadenza_id','=',None)]
+        cerca=[]
         ids_scads = self.pool.get('effetti.scadenze').search(cr,uid,cerca)
         if ids_scads:
             for scad in self.pool.get('effetti.scadenze').browse(cr,uid,ids_scads):               
@@ -227,6 +243,8 @@ class contab_effetti(osv.osv_memory):
                         for sca_doc in docu.righe_scadenze:
                             if scad.name.data_scadenza == sca_doc.data_scadenza:
                                 ok = self.pool.get('effetti.scadenze').write(cr,uid,[scad.id],{'scadenza_id':sca_doc.id})
+                else:
+                    ok = self.pool.get('effetti.scadenze').write(cr,uid,[scad.id],{'scadenza_id':None})
         
     
         return   {'type': 'ir.actions.act_window_close'}          
