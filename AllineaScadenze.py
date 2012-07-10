@@ -19,7 +19,7 @@ sock = xmlrpclib.ServerProxy('http:/localhost:8069/xmlrpc/object')
 # Creazione della lista di records
 # lines = csv.reader(open(sys.argv[1],'rb'),delimiter=";")
 spamWriter = csv.writer(open('log.csv', 'wb'), delimiter=',')
-testo_log = "Inizio procedura di aggiornamento/inserimento ordini di produzione "+time.ctime()+'\n'
+testo_log = "Inizio procedura di Riallineamento Scadenze "+time.ctime()+'\n'
 spamWriter.writerow([testo_log])
 counter = 0
 
@@ -28,7 +28,7 @@ counter = 0
 cerca = [('scadenza_id','=',None)]
 lines_scad =  sock.execute(dbname, uid, pwd, 'effetti.scadenze', 'search', cerca)
 if lines_scad:
-   import pdb;pdb.set_trace()
+   #import pdb;pdb.set_trace()
    for line in lines_doc:
      fields = ['numero_doc']
      results = sock.execute(dbname, uid, pwd, 'effetti.scadenze', 'read', [line], fields)
