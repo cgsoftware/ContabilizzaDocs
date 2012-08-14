@@ -189,8 +189,10 @@ class contab_effetti(osv.osv_memory):
             #import pdb;pdb.set_trace()
             for effetto_scad in doc.righe_scadenze:
                 if effetto_scad.scadenza_id:
-                    # è certamente agganciato un documento di vendita sulla scadenza, non so se esiste la regisatrazione di prima nota
-                    
+                  # è certamente agganciato un do cumento di vendita sulla scadenza, non so se esiste la regisatrazione di prima nota
+                  cerca =[('id','=',effetto_scad.scadenza_id.id)]
+                  ok_ids = self.pool.get('fiscaldoc.scadenze').search(cr,uid,cerca)
+                  if ok_ids: 
                     cerca = [('fiscaldoc_id','=',effetto_scad.scadenza_id.name.id)]
                     id_testa_doc = self.pool.get('account.move').search(cr,uid,cerca)
                     if id_testa_doc: # il documento è contabilizzato
@@ -214,6 +216,8 @@ class contab_effetti(osv.osv_memory):
                                         id_saldo = self.pool.get('account.partite_saldi').create(cr,uid,riga_sald)
                     else:
                         testo_log += " Il Documento "+ effetto_scad.scadenza_id.name.name + " non sembra essere Contabilizzata"
+                  else:
+                      testo_log += " Il Documento "+str(cerca)+ " non chiude partite"
         return [testo_log,flag_scritto]
     
     def allinea_scad(self,cr,uid,ids,context):

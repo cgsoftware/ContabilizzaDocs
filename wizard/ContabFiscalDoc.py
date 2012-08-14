@@ -141,7 +141,7 @@ class contab_fiscaldoc(osv.osv_memory):
                #import pdb;pdb.set_trace()
                notok= move_obj.button_validate(cr,uid,[id_reg],context)
                if notok==False:
-                    # ok = self.pool.get('fiscaldoc.header').write(cr,uid,[doc.id],{'registrazione':id_reg})              
+                    ok = self.pool.get('fiscaldoc.header').write(cr,uid,[doc.id],{'registrazione':id_reg})              
                     scritto[0] = scritto[0]+ "  Incasso Documento "+ doc.name + "  CONTABILIZZATO ALLA REGISTRAZIONE "+ move_head.name +'\n'
                else:
                      #import pdb;pdb.set_trace()
@@ -188,8 +188,9 @@ class contab_fiscaldoc(osv.osv_memory):
             if scritto[1]:
                #import pdb;pdb.set_trace()
                notok= move_obj.button_validate(cr,uid,[id_reg],context)
+               ok = self.pool.get('fiscaldoc.header').write(cr,uid,[doc.id],{'registrazione':id_reg})    
                if notok==False:
-                    ok = self.pool.get('fiscaldoc.header').write(cr,uid,[doc.id],{'registrazione':id_reg})              
+                              
                     scritto[0] = scritto[0]+ "  Documento "+ doc.name + "  CONTABILIZZATO ALLA REGISTRAZIONE "+ move_head.name +'\n'
                else:
                      #import pdb;pdb.set_trace()
@@ -250,6 +251,7 @@ class contab_fiscaldoc(osv.osv_memory):
                         riga['debit']=0
                      riga['account_id']= controp_obj.conto_v_sp_imballo.id
                      #import pdb;pdb.set_trace()
+                     print "riga spese imballo ", riga
                      id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA IMBALLO
                      if not id_riga:
                          flag_scritto= False
@@ -270,6 +272,7 @@ class contab_fiscaldoc(osv.osv_memory):
                         riga['debit']=0
                      riga['account_id']= controp_obj.conto_v_sp_incasso.id
                    #  import pdb;pdb.set_trace()
+                     print "riga spese incasso ", riga
                      id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA INCASSO
                      if not id_riga:
                          flag_scritto= False
@@ -291,6 +294,7 @@ class contab_fiscaldoc(osv.osv_memory):
                         riga['debit']=0
                      riga['account_id']= controp_obj.conto_v_sp_trasporto.id
          #            import pdb;pdb.set_trace()
+                     print "riga spese trasporto ", riga
                      id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA TRASPORTO
                      if not id_riga:
                          flag_scritto= False
@@ -329,19 +333,30 @@ class contab_fiscaldoc(osv.osv_memory):
                      else:
                         segno = "AV"       
                      if segno=="DA":
+                        if netto>0:
                         #segno dare
-                        riga['credit']+=0
-                        riga['debit']+=netto     
+                            riga['credit']+=0
+                            riga['debit']+=netto   
+                        else: 
+                            riga['credit']+=netto*-1
+                            riga['debit']+=0 
+ 
                      else:
                         #segno dare
-                        riga['credit']+=netto     
-                        riga['debit']+=0
+                        if netto>0:
+                            riga['credit']+=netto     
+                            riga['debit']+=0
+                        else:
+                            riga['credit']+=0   
+                            riga['debit']+=netto*-1
+                           
                      riga['account_id']= conto
                      #import pdb;pdb.set_trace()
                      righe[conto]=riga
         if righe:
             for riga in righe.values():
                # import pdb;pdb.set_trace()
+                print "riga ricavo ", riga
                 id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA RICAVO
                 if not id_riga:
                          flag_scritto= False
@@ -363,6 +378,7 @@ class contab_fiscaldoc(osv.osv_memory):
              riga['credit']=riga_iva.imposta       
              riga['debit']=0
             #import pdb;pdb.set_trace()
+            print "riga iva ", riga
             id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA IVA
             if not id_riga:
                  flag_scritto= False
@@ -384,6 +400,7 @@ class contab_fiscaldoc(osv.osv_memory):
         riga['totdocumento']=doc.totale_documento
         riga['pagamento_id']=doc.pagamento_id.id
         #import pdb;pdb.set_trace()
+        print "riga cliente ", riga
         id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA CLIENTE
         if not id_riga:
              flag_scritto= False
@@ -448,6 +465,7 @@ class contab_fiscaldoc(osv.osv_memory):
                         riga['debit']=0
                      riga['account_id']= controp_obj.conto_cassa.id
          #            import pdb;pdb.set_trace()
+                     print "riga cassa incasso ", riga
                      id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA TRASPORTO
                      if not id_riga:
                          flag_scritto= False
@@ -470,6 +488,7 @@ class contab_fiscaldoc(osv.osv_memory):
         riga['totdocumento']=importo
         riga['pagamento_id']=doc.pagamento_id.id
         #import pdb;pdb.set_trace()
+        print "riga cliente incasso ", riga
         id_riga = self.pool.get('account.move.line').create(cr,uid,riga) # RIGA CLIENTE
         if not id_riga:
              flag_scritto= False
